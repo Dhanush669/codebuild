@@ -1,0 +1,56 @@
+version: "2.1"
+services:
+
+  nodejs:
+    image: custom-node/mysql
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: on-failure 
+    networks:
+      - frontend
+      - backend
+    environment:
+      - MYSQL_HOST=moe-mysql-app
+      - MYSQL_USER=moeuser
+      - MYSQL_PASS=moepass
+      - MYSQL_DB=moe_db
+    volumes:
+      - ./www/:/var/www/html/
+    ports:
+      - "8081:8007"
+    container_name: moe-nodejs-app
+    
+  mysql:
+    image: mysql:5.7
+    networks:
+      - backend
+    ports:
+      - "3306:3306"  
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=moeuser
+      - MYSQL_PASSWORD=moepass 
+      - MYSQL_DATABASE=moe_db
+    container_name: moe-mysql-app
+    healthcheck:
+            test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+            timeout: 20s
+            retries: 10
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:4.7
+    depends_on:
+      - mysql
+    networks:
+      - backend
+    ports:
+      - "30002:80"
+    environment:
+      - PMA_HOST=moe-mysql-app
+      - PMA_PORT= 3306
+    volumes:
+      - /sessions
+    container_name: moe-phpmyadmin-app
+networks:
+  frontend:
+  backend:

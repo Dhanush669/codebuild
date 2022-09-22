@@ -1,0 +1,17 @@
+pipeline{
+    
+    agent any
+
+    stages{
+        stage("check"){
+            steps{
+                sh 'docker build -t custom-node/mysql .'
+                sh 'docker compose up -d'
+                sh 'docker tag phpmyadmin/phpmyadmin:4.7 dhanush717/phpadmin'
+                sh 'docker tag mysql:5.7 dhanush717/mysql'
+                sh 'docker tag custom-node/mysql dhanush717/customnode'
+                sh 'docker images'
+            }
+        }
+    }
+}
