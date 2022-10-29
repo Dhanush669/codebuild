@@ -53,7 +53,6 @@ app.get('/',function(req,res){
    connection.end();
 });
 
-
 app.listen(port, function(){
     console.log('Sample mySQL app listening on port ' + port);
 });
